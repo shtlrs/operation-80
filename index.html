@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operation 80</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --card: #1a1a22;
+    --border: #2a2a38;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --green: #4caf82;
+    --yellow: #f5c842;
+    --teal: #2dd4bf;
+    --text: #e8e8f0;
+    --muted: #888;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 16px;
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  h1 { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+  h2 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .date-info { text-align: right; font-size: .85rem; color: var(--muted); }
+  .date-info strong { display: block; font-size: 1rem; color: var(--text); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .card.accent-border { border-left: 3px solid var(--accent); }
+  .card.green-border  { border-left: 3px solid var(--green); }
+  .card.yellow-border { border-left: 3px solid var(--yellow); }
+  .card.red-border    { border-left: 3px solid var(--accent2); }
+  .card.teal-border   { border-left: 3px solid var(--teal); }
+
+  /* ── checklist ─────────────────────────────────────────── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li.done { opacity: .4; text-decoration: line-through; }
+  .checklist li input[type=checkbox] {
+    appearance: none;
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: background .15s, border-color .15s;
+  }
+  .checklist li input[type=checkbox]:checked {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .checklist li input[type=checkbox]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -52%);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ── targets ───────────────────────────────────────────── */
+  .targets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .target-item {
+    background: #12121a;
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .target-item .label { font-size: .75rem; color: var(--muted); }
+  .target-item .value { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+
+  /* ── workout ───────────────────────────────────────────── */
+  .workout-day-label {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: .75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .rest-label { background: var(--muted); }
+
+  /* ── progress ──────────────────────────────────────────── */
+  .progress-bar {
+    background: var(--border);
+    border-radius: 99px;
+    height: 6px;
+    margin-top: 14px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 99px;
+    transition: width .3s ease;
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: .75rem; color: var(--muted);
+    margin-top: 5px;
+  }
+  .section-group { margin-bottom: 6px; }
+  .section-title {
+    font-size: .75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: var(--accent); margin-bottom: 4px;
+  }
+
+  /* ── meals ─────────────────────────────────────────────── */
+  .meals-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+  }
+  .shuffle-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: .85rem;
+    font-weight: 600;
+    transition: opacity .15s;
+  }
+  .shuffle-btn:hover { opacity: .85; }
+  .meal-slot { margin-bottom: 14px; }
+  .meal-slot:last-child { margin-bottom: 0; }
+  .meal-slot-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+  .meal-slot-title {
+    font-size: .75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: var(--accent);
+  }
+  .respin-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 2px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: .8rem;
+    transition: color .15s, border-color .15s;
+  }
+  .respin-btn:hover { color: var(--text); border-color: var(--accent); }
+  .meal-card {
+    background: #12121a;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .meal-name { font-weight: 600; font-size: .95rem; margin-bottom: 8px; }
+  .meal-ingredients { list-style: none; }
+  .meal-ingredients li {
+    font-size: .88rem;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .meal-ingredients li:last-child { border-bottom: none; }
+  .meal-macros { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .chip { font-size: .75rem; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+  .chip-p { background: rgba(108,99,255,.2); color: #a09cf0; }
+  .chip-f { background: rgba(76,175,130,.2); color: #4caf82; }
+  .chip-c { background: rgba(245,200,66,.2); color: #f5c842; }
+  .tuna-note { font-size: .75rem; color: var(--accent2); margin-top: 6px; }
+
+  /* ── macro summary ─────────────────────────────────────── */
+  .macro-summary {
+    background: #12121a;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 14px;
+  }
+  .macro-summary-title {
+    font-size: .75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .macro-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .macro-row:last-child { margin-bottom: 0; }
+  .macro-row-label { font-size: .8rem; color: var(--muted); width: 70px; flex-shrink: 0; }
+  .mini-bar { flex: 1; background: var(--border); border-radius: 99px; height: 5px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 99px; transition: width .4s; }
+  .mini-fill.good { background: var(--green); }
+  .mini-fill.warn { background: var(--yellow); }
+  .mini-fill.low  { background: var(--accent2); }
+  .macro-row-val { font-size: .8rem; font-weight: 700; width: 70px; text-align: right; flex-shrink: 0; }
+  .macro-row-val.good { color: var(--green); }
+  .macro-row-val.warn { color: var(--yellow); }
+  .macro-row-val.low  { color: var(--accent2); }
+
+  /* ── shopping list ─────────────────────────────────────── */
+  .shop-header {
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .shop-header h2 { margin-bottom: 0; flex: 1; }
+  .shop-meta {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .shop-count {
+    font-size: .75rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .shop-count.all-done { color: var(--green); font-weight: 700; }
+  .shop-reset {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 2px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: .75rem;
+    transition: color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .shop-reset:hover { color: var(--accent2); border-color: var(--accent2); }
+  .shop-arrow {
+    color: var(--muted);
+    font-size: .9rem;
+    transition: transform .3s ease;
+    flex-shrink: 0;
+  }
+  .shop-arrow.open { transform: rotate(90deg); }
+
+  .shop-body {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height .35s ease, opacity .25s ease;
+  }
+  .shop-body.open {
+    max-height: 2400px;
+    opacity: 1;
+  }
+  .shop-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+  .shop-category { margin-bottom: 14px; }
+  .shop-category:last-child { margin-bottom: 0; }
+  .shop-category-title {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--teal);
+    margin-bottom: 6px;
+  }
+  .shop-list { list-style: none; }
+  .shop-list li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .shop-list li:last-child { border-bottom: none; }
+  .shop-list li.got { opacity: .35; text-decoration: line-through; }
+  .shop-list li input[type=checkbox] {
+    appearance: none;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: background .15s, border-color .15s;
+  }
+  .shop-list li input[type=checkbox]:checked {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .shop-list li input[type=checkbox]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -52%);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .shop-item-name { font-size: .9rem; flex: 1; }
+  .shop-item-qty {
+    font-size: .78rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .shop-note {
+    font-size: .72rem;
+    color: var(--accent2);
+    margin-top: 2px;
+  }
+  .shop-progress-bar {
+    background: var(--border);
+    border-radius: 99px;
+    height: 4px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .shop-progress-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 99px;
+    transition: width .3s ease;
+  }
+
+  @media (max-width: 400px) {
+    .targets-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── sync indicator ────────────────────────────────────── */
+  .sync-dot {
+    position: fixed;
+    bottom: 18px; right: 18px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity .3s, background .3s;
+    pointer-events: none;
+  }
+  .sync-dot.syncing { opacity: 1; background: var(--yellow); }
+  .sync-dot.saved   { opacity: 1; background: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Operation 80</h1>
+    <div style="font-size:.85rem;color:var(--muted);margin-top:2px;">Week <span id="week-num">—</span> of 8</div>
+  </div>
+  <div class="date-info">
+    <strong id="day-name">—</strong>
+    <span id="full-date">—</span>
+  </div>
+</div>
+
+<!-- Daily Targets -->
+<div class="card yellow-border">
+  <h2>Daily Targets</h2>
+  <div class="targets-grid">
+    <div class="target-item"><div class="label">Calories</div><div class="value">2 100 kcal</div></div>
+    <div class="target-item"><div class="label">Protein</div><div class="value">180 g</div></div>
+    <div class="target-item"><div class="label">Fiber</div><div class="value">40–45 g</div></div>
+    <div class="target-item"><div class="label">Water</div><div class="value">3 L</div></div>
+    <div class="target-item"><div class="label">Steps</div><div class="value">8–10 k</div></div>
+  </div>
+</div>
+
+<!-- Weekly Shopping List -->
+<div class="card teal-border" id="shop-card">
+  <div class="shop-header" onclick="toggleShop()">
+    <h2>Weekly Shopping</h2>
+    <div class="shop-meta">
+      <span class="shop-count" id="shop-count">0 / 0</span>
+      <button class="shop-reset" onclick="resetShop(event)">Reset</button>
+      <span class="shop-arrow" id="shop-arrow">▶</span>
+    </div>
+  </div>
+
+  <div class="shop-body" id="shop-body">
+    <div class="shop-divider"></div>
+
+    <div class="shop-category">
+      <div class="shop-category-title">Protein</div>
+      <ul class="shop-list" id="shop-protein">
+        <li data-skey="sp1"><input type="checkbox"><span class="shop-item-name">Chicken breast</span><span class="shop-item-qty">3 kg</span></li>
+        <li data-skey="sp2"><input type="checkbox"><span class="shop-item-name">Frozen white fish</span><span class="shop-item-qty">1 kg</span></li>
+        <li data-skey="sp3"><input type="checkbox"><span class="shop-item-name">Eggs</span><span class="shop-item-qty">24</span></li>
+        <li data-skey="sp4"><input type="checkbox"><span class="shop-item-name">0% Greek yogurt / skyr</span><span class="shop-item-qty">3 kg</span></li>
+        <li data-skey="sp5"><input type="checkbox"><span class="shop-item-name">Cottage cheese</span><span class="shop-item-qty">2 kg</span></li>
+        <li data-skey="sp6">
+          <input type="checkbox">
+          <span class="shop-item-name">Canned light tuna</span>
+          <span class="shop-item-qty">4 cans</span>
+        </li>
+      </ul>
+      <div class="shop-note" style="padding-left:28px">Tuna: use max 3–4 meals / week</div>
+    </div>
+
+    <div class="shop-category">
+      <div class="shop-category-title">Carbs</div>
+      <ul class="shop-list" id="shop-carbs">
+        <li data-skey="sc1"><input type="checkbox"><span class="shop-item-name">Rice (dry)</span><span class="shop-item-qty">1 kg</span></li>
+        <li data-skey="sc2"><input type="checkbox"><span class="shop-item-name">Potatoes</span><span class="shop-item-qty">3 kg</span></li>
+        <li data-skey="sc3"><input type="checkbox"><span class="shop-item-name">Oats</span><span class="shop-item-qty">700 g</span></li>
+        <li data-skey="sc4"><input type="checkbox"><span class="shop-item-name">High-fiber crackers</span><span class="shop-item-qty">400 g</span></li>
+      </ul>
+    </div>
+
+    <div class="shop-category">
+      <div class="shop-category-title">Vegetables</div>
+      <ul class="shop-list" id="shop-veg">
+        <li data-skey="sv1"><input type="checkbox"><span class="shop-item-name">Broccoli</span><span class="shop-item-qty">1 kg</span></li>
+        <li data-skey="sv2"><input type="checkbox"><span class="shop-item-name">Green beans</span><span class="shop-item-qty">1 kg</span></li>
+        <li data-skey="sv3"><input type="checkbox"><span class="shop-item-name">Mixed vegetables (frozen)</span><span class="shop-item-qty">1 kg</span></li>
+        <li data-skey="sv4"><input type="checkbox"><span class="shop-item-name">Carrots</span><span class="shop-item-qty">1 kg</span></li>
+        <li data-skey="sv5"><input type="checkbox"><span class="shop-item-name">Spinach</span><span class="shop-item-qty">500 g</span></li>
+        <li data-skey="sv6"><input type="checkbox"><span class="shop-item-name">Tomatoes</span><span class="shop-item-qty">700 g</span></li>
+        <li data-skey="sv7"><input type="checkbox"><span class="shop-item-name">Cucumbers</span><span class="shop-item-qty">×2</span></li>
+        <li data-skey="sv8"><input type="checkbox"><span class="shop-item-name">Bell peppers</span><span class="shop-item-qty">×4</span></li>
+        <li data-skey="sv9"><input type="checkbox"><span class="shop-item-name">Salad bags</span><span class="shop-item-qty">×2</span></li>
+      </ul>
+    </div>
+
+    <div class="shop-category">
+      <div class="shop-category-title">Fiber Sources</div>
+      <ul class="shop-list" id="shop-fiber">
+        <li data-skey="sf1"><input type="checkbox"><span class="shop-item-name">Kidney beans (canned)</span><span class="shop-item-qty">4 cans</span></li>
+        <li data-skey="sf2"><input type="checkbox"><span class="shop-item-name">Chickpeas (canned)</span><span class="shop-item-qty">2 cans</span></li>
+      </ul>
+    </div>
+
+    <div class="shop-category">
+      <div class="shop-category-title">Fruit</div>
+      <ul class="shop-list" id="shop-fruit">
+        <li data-skey="sft1"><input type="checkbox"><span class="shop-item-name">Apples</span><span class="shop-item-qty">×7</span></li>
+        <li data-skey="sft2"><input type="checkbox"><span class="shop-item-name">Bananas</span><span class="shop-item-qty">×7</span></li>
+        <li data-skey="sft3"><input type="checkbox"><span class="shop-item-name">Pears</span><span class="shop-item-qty">×4</span></li>
+        <li data-skey="sft4"><input type="checkbox"><span class="shop-item-name">Frozen berries</span><span class="shop-item-qty">700 g</span></li>
+      </ul>
+    </div>
+
+    <div class="shop-category">
+      <div class="shop-category-title">Fats</div>
+      <ul class="shop-list" id="shop-fats">
+        <li data-skey="sg1"><input type="checkbox"><span class="shop-item-name">Peanut butter</span><span class="shop-item-qty">1 jar</span></li>
+        <li data-skey="sg2"><input type="checkbox"><span class="shop-item-name">Olive oil</span><span class="shop-item-qty">1 bottle</span></li>
+      </ul>
+    </div>
+
+    <div class="shop-progress-bar">
+      <div class="shop-progress-fill" id="shop-progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Today's Workout -->
+<div class="card accent-border">
+  <span class="workout-day-label" id="workout-label">—</span>
+  <h2 id="workout-title">—</h2>
+  <ul class="checklist" id="workout-list"></ul>
+</div>
+
+<!-- Meal Suggestions -->
+<div class="card red-border">
+  <div class="meals-header">
+    <h2 style="margin-bottom:0">Today's Meals</h2>
+    <button class="shuffle-btn" onclick="shuffleAll()">↺ Shuffle All</button>
+  </div>
+
+  <div class="meal-slot">
+    <div class="meal-slot-header">
+      <span class="meal-slot-title">Breakfast</span>
+      <button class="respin-btn" onclick="reshuffleSingle('breakfast')">↺</button>
+    </div>
+    <div class="meal-card" id="meal-breakfast"></div>
+  </div>
+
+  <div class="meal-slot">
+    <div class="meal-slot-header">
+      <span class="meal-slot-title">Lunch</span>
+      <button class="respin-btn" onclick="reshuffleSingle('lunch')">↺</button>
+    </div>
+    <div class="meal-card" id="meal-lunch"></div>
+  </div>
+
+  <div class="meal-slot">
+    <div class="meal-slot-header">
+      <span class="meal-slot-title">Snack</span>
+      <button class="respin-btn" onclick="reshuffleSingle('snack')">↺</button>
+    </div>
+    <div class="meal-card" id="meal-snack"></div>
+  </div>
+
+  <div class="meal-slot">
+    <div class="meal-slot-header">
+      <span class="meal-slot-title">Dinner</span>
+      <button class="respin-btn" onclick="reshuffleSingle('dinner')">↺</button>
+    </div>
+    <div class="meal-card" id="meal-dinner"></div>
+  </div>
+
+  <div class="macro-summary">
+    <div class="macro-summary-title">Estimated Daily Totals</div>
+    <div class="macro-row">
+      <span class="macro-row-label">Protein</span>
+      <div class="mini-bar"><div class="mini-fill" id="bar-p"></div></div>
+      <span class="macro-row-val" id="val-p">— g</span>
+    </div>
+    <div class="macro-row">
+      <span class="macro-row-label">Fiber</span>
+      <div class="mini-bar"><div class="mini-fill" id="bar-f"></div></div>
+      <span class="macro-row-val" id="val-f">— g</span>
+    </div>
+    <div class="macro-row">
+      <span class="macro-row-label">Calories</span>
+      <div class="mini-bar"><div class="mini-fill" id="bar-cal"></div></div>
+      <span class="macro-row-val" id="val-cal">— kcal</span>
+    </div>
+  </div>
+</div>
+
+<!-- Daily Checklist -->
+<div class="card green-border">
+  <h2>Daily Checklist</h2>
+  <div class="section-group">
+    <div class="section-title">Morning</div>
+    <ul class="checklist" id="morning-list">
+      <li data-key="m1"><input type="checkbox"> Log weight</li>
+      <li data-key="m2"><input type="checkbox"> 500 ml water on waking</li>
+      <li data-key="m3"><input type="checkbox"> Check today's workout</li>
+    </ul>
+  </div>
+  <div class="section-group" style="margin-top:12px">
+    <div class="section-title">Nutrition</div>
+    <ul class="checklist" id="nutrition-list">
+      <li data-key="n1"><input type="checkbox"> Protein target hit (180 g)</li>
+      <li data-key="n2"><input type="checkbox"> Fiber target hit (40–45 g)</li>
+      <li data-key="n3"><input type="checkbox"> Calories controlled (~2 100)</li>
+      <li data-key="n4"><input type="checkbox"> Water target hit (3 L)</li>
+    </ul>
+  </div>
+  <div class="section-group" style="margin-top:12px">
+    <div class="section-title">Activity</div>
+    <ul class="checklist" id="activity-list">
+      <li data-key="a1"><input type="checkbox"> Workout / session completed</li>
+      <li data-key="a2"><input type="checkbox"> Steps completed (8–10 k)</li>
+      <li data-key="a3"><input type="checkbox"> Mobility done</li>
+    </ul>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="progress-label"><span>Day progress</span><span id="progress-text">0 / 10</span></div>
+</div>
+
+<!-- Weekly review: Sunday only -->
+<div class="card" id="weekly-review-card" style="display:none; border-left: 3px solid var(--yellow)">
+  <h2>Weekly Review</h2>
+  <ul class="checklist" id="weekly-list">
+    <li data-key="w1"><input type="checkbox"> Record average weight this week</li>
+    <li data-key="w2"><input type="checkbox"> Measure waist</li>
+    <li data-key="w3"><input type="checkbox"> Front photo</li>
+    <li data-key="w4"><input type="checkbox"> Side photo</li>
+    <li data-key="w5"><input type="checkbox"> Back photo</li>
+    <li data-key="w6"><input type="checkbox"> Note knee condition</li>
+    <li data-key="w7"><input type="checkbox"> Note energy level</li>
+    <li data-key="w8"><input type="checkbox"> Meal prep done</li>
+  </ul>
+</div>
+
+<div style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:20px;padding-bottom:24px;">
+  Daily checks reset at midnight · Shopping list resets every Monday
+</div>
+<div class="sync-dot" id="sync-dot"></div>
+
+<script>
+// ─── Plan start ───────────────────────────────────────────────
+const PLAN_START = new Date('2026-07-27');
+
+// ─── Meal data ────────────────────────────────────────────────
+// Macros calculated from per-100g references:
+//   chicken breast raw: 165 kcal, 31g P  |  white fish raw: 82 kcal, 18g P
+//   tuna canned drained: 116 kcal, 26g P  |  egg: 70 kcal, 6g P
+//   0% Greek yogurt: 59 kcal, 10g P  |  cottage cheese (low-fat): 80 kcal, 11g P
+//   oats dry: 389 kcal, 17g P, 10g F  |  rice cooked: 130 kcal, 2.7g P
+//   potatoes boiled: 90 kcal, 2g P, 2g F  |  crackers: 330 kcal, 10g P, 18g F
+//   kidney beans cooked: 127 kcal, 8.7g P, 7.4g F  |  chickpeas cooked: 164 kcal, 8.9g P, 7.6g F
+//   broccoli: 34 kcal, 2.8g P, 2.6g F  |  mixed veg avg: 30 kcal, 2.5g P, 3g F
+//   bell pepper: 31 kcal, 1g P, 2g F  |  spinach: 23 kcal, 2.9g P, 2.2g F
+//   carrots: 41 kcal, 0.9g P, 2.8g F  |  green beans: 31 kcal, 1.8g P, 3.4g F
+//   berries frozen: 50 kcal, 1g P, 4g F  |  banana ~120g: 90 kcal, 1g P, 2.5g F
+//   apple ~180g: 94 kcal, 0.5g P, 2.7g F  |  pear ~180g: 103 kcal, 0.7g P, 3.4g F
+//   peanut butter: 590 kcal, 25g P, 6g F  |  olive oil: 884 kcal (5g drizzle = 44 kcal)
+const MEALS = {
+  breakfast: [
+    {
+      name: "Classic Yogurt Bowl",
+      items: ["0% Greek yogurt · 500 g", "Frozen berries · 100 g", "Peanut butter · 20 g", "High-fiber crackers · 40 g"],
+      protein: 59, fiber: 12, cal: 595
+    },
+    {
+      name: "Oat & Yogurt Power",
+      items: ["Oats · 70 g", "0% Greek yogurt · 300 g", "Banana · 1", "Peanut butter · 15 g"],
+      protein: 47, fiber: 10, cal: 628
+    },
+    {
+      name: "Egg & Curd Plate",
+      items: ["Eggs · 4 (scrambled)", "Cottage cheese · 200 g", "High-fiber crackers · 40 g", "Apple · 1"],
+      protein: 51, fiber: 10, cal: 666
+    },
+    {
+      name: "Cottage Cheese Crunch",
+      items: ["Cottage cheese · 350 g", "High-fiber crackers · 40 g", "Frozen berries · 100 g", "Peanut butter · 20 g"],
+      protein: 49, fiber: 12, cal: 580
+    },
+    {
+      name: "Skyr Power Bowl",
+      items: ["Skyr / 0% Greek yogurt · 400 g", "Oats · 60 g", "Frozen berries · 150 g", "Banana · 1"],
+      protein: 53, fiber: 15, cal: 634
+    },
+    {
+      name: "Yogurt & Egg Boost",
+      items: ["0% Greek yogurt · 300 g", "Eggs · 3 (boiled)", "High-fiber crackers · 40 g", "Pear · 1"],
+      protein: 53, fiber: 11, cal: 622
+    }
+  ],
+  lunch: [
+    {
+      name: "Chicken Rice & Kidney Beans",
+      items: ["Chicken breast · 150 g", "Rice · 200 g (cooked)", "Mixed veg · 250 g", "Kidney beans · 100 g"],
+      protein: 67, fiber: 16, cal: 710
+    },
+    {
+      name: "Tuna Potato Bowl",
+      items: ["Canned tuna · 240 g (2 cans)", "Potatoes · 200 g", "Green beans · 200 g", "Chickpeas · 60 g"],
+      protein: 75, fiber: 15, cal: 618,
+      tuna: true
+    },
+    {
+      name: "Chicken Potato & Chickpeas",
+      items: ["Chicken breast · 150 g", "Potatoes · 200 g", "Broccoli · 250 g", "Chickpeas · 100 g"],
+      protein: 66, fiber: 18, cal: 677
+    },
+    {
+      name: "Chicken Spinach Rice",
+      items: ["Chicken breast · 150 g", "Rice · 150 g (cooked)", "Spinach · 200 g", "Bell pepper · 150 g", "Kidney beans · 80 g"],
+      protein: 65, fiber: 14, cal: 638
+    },
+    {
+      name: "Egg & Chicken Combo",
+      items: ["Eggs · 2", "Chicken breast · 120 g", "Rice · 130 g (cooked)", "Mixed veg · 200 g", "Chickpeas · 60 g"],
+      protein: 63, fiber: 11, cal: 665
+    },
+    {
+      name: "Chicken Carrot & Beans",
+      items: ["Chicken breast · 150 g", "Potatoes · 200 g", "Carrots · 200 g", "Kidney beans · 100 g"],
+      protein: 61, fiber: 17, cal: 637
+    }
+  ],
+  snack: [
+    {
+      name: "Cottage Cheese & Fruit",
+      items: ["Cottage cheese · 300 g", "Apple · 1", "High-fiber crackers · 15 g"],
+      protein: 35, fiber: 5, cal: 384
+    },
+    {
+      name: "Yogurt & Crunch",
+      items: ["0% Greek yogurt · 300 g", "High-fiber crackers · 20 g", "Banana · 1"],
+      protein: 33, fiber: 6, cal: 333
+    },
+    {
+      name: "Curd & Berries",
+      items: ["Cottage cheese · 250 g", "Frozen berries · 100 g", "High-fiber crackers · 20 g"],
+      protein: 31, fiber: 8, cal: 316
+    },
+    {
+      name: "Egg & Yogurt Snack",
+      items: ["Eggs · 2 (hard boiled)", "0% Greek yogurt · 200 g", "Apple · 1", "High-fiber crackers · 15 g"],
+      protein: 34, fiber: 5, cal: 402
+    },
+    {
+      name: "Cottage Cheese & Crunch",
+      items: ["Cottage cheese · 250 g", "High-fiber crackers · 40 g", "Banana · 1"],
+      protein: 33, fiber: 10, cal: 422
+    }
+  ],
+  dinner: [
+    {
+      name: "Fish & Roasted Potatoes",
+      items: ["White fish · 150 g", "Potatoes · 250 g", "Broccoli · 250 g", "Olive oil · drizzle (5 g)"],
+      protein: 39, fiber: 12, cal: 477
+    },
+    {
+      name: "Chicken & Potato Bake",
+      items: ["Chicken breast · 120 g", "Potatoes · 200 g", "Mixed veg · 250 g", "Olive oil · drizzle (5 g)"],
+      protein: 47, fiber: 12, cal: 497
+    },
+    {
+      name: "Fish Rice Bowl",
+      items: ["White fish · 150 g", "Rice · 130 g (cooked)", "Spinach · 200 g", "Carrots · 100 g"],
+      protein: 37, fiber: 8, cal: 379
+    },
+    {
+      name: "Chicken Bell Pepper Stir",
+      items: ["Chicken breast · 120 g", "Rice · 130 g (cooked)", "Bell peppers · 200 g", "Broccoli · 200 g"],
+      protein: 48, fiber: 10, cal: 497
+    },
+    {
+      name: "Tuna & Green Beans",
+      items: ["Canned tuna · 1 can (~120 g)", "Potatoes · 250 g", "Green beans · 250 g"],
+      protein: 41, fiber: 14, cal: 442,
+      tuna: true
+    },
+    {
+      name: "Fish & Veg Tray",
+      items: ["White fish · 150 g", "Potatoes · 200 g", "Bell peppers · 150 g", "Green beans · 200 g", "Olive oil · drizzle (5 g)"],
+      protein: 36, fiber: 14, cal: 456
+    }
+  ]
+};
+
+// ─── Workout data ─────────────────────────────────────────────
+const WORKOUTS = {
+  1: { label: 'Upper Strength A', items: ['Push-ups — 4×8–15','Pike push-ups — 4×8–12','Rows — 4×10–15','Chair dips — 3×10–12','Plank — 3×60 sec','Side plank — 3×30–45 sec'] },
+  2: { label: 'Knee Strength + Walk', items: ['Walk 45 min','Glute bridge — 4×15','Side leg raise — 3×15','Clamshell — 3×20','Calf raise — 4×20','Single-leg balance — 5×30 sec'] },
+  3: { label: 'Full Body', items: ['Chair squat (above 90°) — 4×12–15','Backpack Romanian deadlift — 4×12','Push-ups — 3 sets','Hip bridge — 4×15','Dead bug — 3×12'] },
+  4: { label: 'Walk + Mobility', items: ['Walk 45–60 min','Hip mobility','Calf mobility','Hamstring mobility'] },
+  5: { label: 'Upper Strength B', items: ['Push-up variation — 4 sets','Rows — 4×12','Pike push-ups — 3×10','Chair dips — 3×12','Core circuit'] },
+  6: { label: 'Long Walk', items: ['Walk 60–90 min','Optional: swimming / cycling'] },
+  0: { label: 'Rest + Meal Prep', rest: true, items: ['Rest today','Cook 3 kg chicken','Cook 1 kg rice','Roast 3 kg potatoes','Prepare vegetables','Portion meals into containers'] }
+};
+
+// ─── Keys ─────────────────────────────────────────────────────
+function todayKey() {
+  const d = new Date();
+  return `op80-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function weekKey() {
+  const d = new Date();
+  const dow = d.getDay();
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - (dow === 0 ? 6 : dow - 1));
+  return `op80-shop-${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,'0')}-${String(mon.getDate()).padStart(2,'0')}`;
+}
+
+// ─── Server state (single KV blob, loaded once on startup) ────
+let CACHE = {};
+let _syncTimer = null;
+const dot = () => document.getElementById('sync-dot');
+
+async function loadState() {
+  try {
+    const res = await fetch('/api/state');
+    CACHE = (res.ok ? await res.json() : {}) || {};
+  } catch { CACHE = {}; }
+}
+
+function _sync() {
+  const d = dot();
+  if (d) { d.className = 'sync-dot syncing'; }
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(async () => {
+    try {
+      await fetch('/api/state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(CACHE)
+      });
+      if (d) {
+        d.className = 'sync-dot saved';
+        setTimeout(() => { d.className = 'sync-dot'; }, 1500);
+      }
+    } catch {
+      if (d) { d.className = 'sync-dot'; }
+    }
+  }, 600);
+}
+
+// ─── Daily state ──────────────────────────────────────────────
+function getState()       { return CACHE[todayKey()] || {}; }
+function setState(data)   { CACHE[todayKey()] = data; _sync(); }
+
+// ─── Shopping state (weekly) ──────────────────────────────────
+function getShopState()      { return CACHE[weekKey()] || {}; }
+function setShopState(data)  { CACHE[weekKey()] = data; _sync(); }
+
+// ─── Plan helpers ─────────────────────────────────────────────
+function dayOfPlan() {
+  return Math.max(Math.floor((new Date() - PLAN_START) / (24*60*60*1000)), 0);
+}
+function weekNumber() {
+  return Math.min(Math.max(Math.floor(dayOfPlan() / 7) + 1, 1), 8);
+}
+
+// ─── Shopping list ────────────────────────────────────────────
+function toggleShop() {
+  const body  = document.getElementById('shop-body');
+  const arrow = document.getElementById('shop-arrow');
+  const open  = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+}
+function resetShop(e) {
+  e.stopPropagation();
+  if (!confirm('Reset the shopping list for this week?')) return;
+  setShopState({});
+  document.querySelectorAll('#shop-body .shop-list li').forEach(li => {
+    const cb = li.querySelector('input[type=checkbox]');
+    cb.checked = false;
+    li.classList.remove('got');
+  });
+  updateShopProgress();
+}
+function bindShopList() {
+  const state = getShopState();
+  document.querySelectorAll('#shop-body .shop-list li').forEach(li => {
+    const key = li.dataset.skey;
+    const cb  = li.querySelector('input[type=checkbox]');
+    cb.checked = !!state[key];
+    if (cb.checked) li.classList.add('got');
+    li.addEventListener('click', (e) => {
+      toggleShopItem(li, key, e.target.type === 'checkbox' ? e.target.checked : undefined);
+    });
+  });
+  updateShopProgress();
+}
+function toggleShopItem(li, key, value) {
+  const cb = li.querySelector('input[type=checkbox]');
+  const newVal = value !== undefined ? value : !cb.checked;
+  cb.checked = newVal;
+  li.classList.toggle('got', newVal);
+  const state = getShopState();
+  state[key] = newVal;
+  setShopState(state);
+  updateShopProgress();
+}
+function updateShopProgress() {
+  const all  = document.querySelectorAll('#shop-body .shop-list li');
+  const done = [...all].filter(li => li.classList.contains('got')).length;
+  const total = all.length;
+  const pct  = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('shop-progress-fill').style.width = pct + '%';
+  const countEl = document.getElementById('shop-count');
+  countEl.textContent = `${done} / ${total}`;
+  countEl.className = 'shop-count' + (done === total && total > 0 ? ' all-done' : '');
+}
+
+// ─── Meal selection ───────────────────────────────────────────
+function defaultIndices() {
+  const d = dayOfPlan();
+  return {
+    breakfast: d % MEALS.breakfast.length,
+    lunch:     (d + 1) % MEALS.lunch.length,
+    snack:     (d + 2) % MEALS.snack.length,
+    dinner:    (d + 3) % MEALS.dinner.length
+  };
+}
+function getMealSelection() {
+  const state = getState();
+  if (state.meals) return state.meals;
+  const def = defaultIndices();
+  saveMealSelection(def);
+  return def;
+}
+function saveMealSelection(sel) {
+  const state = getState(); state.meals = sel; setState(state);
+}
+function shuffleAll() {
+  const lunchIdx  = Math.floor(Math.random() * MEALS.lunch.length);
+  const lunchTuna = MEALS.lunch[lunchIdx].tuna;
+  let dinnerIdx   = Math.floor(Math.random() * MEALS.dinner.length);
+  if (lunchTuna && MEALS.dinner[dinnerIdx].tuna) {
+    const safe = MEALS.dinner.map((_,i)=>i).filter(i => !MEALS.dinner[i].tuna);
+    if (safe.length) dinnerIdx = safe[Math.floor(Math.random()*safe.length)];
+  }
+  const sel = {
+    breakfast: Math.floor(Math.random() * MEALS.breakfast.length),
+    lunch: lunchIdx, snack: Math.floor(Math.random() * MEALS.snack.length), dinner: dinnerIdx
+  };
+  saveMealSelection(sel);
+  renderAllMeals(sel);
+}
+function reshuffleSingle(slot) {
+  const sel       = getMealSelection();
+  const lunchTuna = MEALS.lunch[sel.lunch]?.tuna;
+  const dinnerTuna= MEALS.dinner[sel.dinner]?.tuna;
+  if (slot === 'lunch') {
+    let idx = Math.floor(Math.random() * MEALS.lunch.length);
+    if (dinnerTuna && MEALS.lunch[idx].tuna) {
+      const safe = MEALS.lunch.map((_,i)=>i).filter(i => !MEALS.lunch[i].tuna);
+      if (safe.length) idx = safe[Math.floor(Math.random()*safe.length)];
+    }
+    sel.lunch = idx;
+  } else if (slot === 'dinner') {
+    let idx = Math.floor(Math.random() * MEALS.dinner.length);
+    if (lunchTuna && MEALS.dinner[idx].tuna) {
+      const safe = MEALS.dinner.map((_,i)=>i).filter(i => !MEALS.dinner[i].tuna);
+      if (safe.length) idx = safe[Math.floor(Math.random()*safe.length)];
+    }
+    sel.dinner = idx;
+  } else {
+    sel[slot] = Math.floor(Math.random() * MEALS[slot].length);
+  }
+  saveMealSelection(sel);
+  renderAllMeals(sel);
+}
+
+// ─── Render meals ─────────────────────────────────────────────
+function renderMeal(slot, meal) {
+  const el = document.getElementById(`meal-${slot}`);
+  let html = `<div class="meal-name">${meal.name}</div><ul class="meal-ingredients">`;
+  meal.items.forEach(item => { html += `<li>${item}</li>`; });
+  html += `</ul><div class="meal-macros">`;
+  html += `<span class="chip chip-p">${meal.protein} g protein</span>`;
+  html += `<span class="chip chip-f">${meal.fiber} g fiber</span>`;
+  html += `<span class="chip chip-c">${meal.cal} kcal</span>`;
+  html += `</div>`;
+  if (meal.tuna) html += `<div class="tuna-note">⚠ Tuna — max 3–4× per week</div>`;
+  el.innerHTML = html;
+}
+function renderAllMeals(sel) {
+  ['breakfast','lunch','snack','dinner'].forEach(slot => renderMeal(slot, MEALS[slot][sel[slot]]));
+  updateMacroSummary(sel);
+}
+
+// ─── Macro summary ────────────────────────────────────────────
+function macroStatus(v, lo, hi) {
+  if (v >= lo * 0.93 && v <= hi) return 'good';
+  return v < lo * 0.93 ? 'low' : 'warn';
+}
+function updateMacroSummary(sel) {
+  const totP   = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + MEALS[sl][sel[sl]].protein, 0);
+  const totF   = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + MEALS[sl][sel[sl]].fiber,   0);
+  const totCal = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + MEALS[sl][sel[sl]].cal,     0);
+  const pSt = macroStatus(totP, 180, 200), fSt = macroStatus(totF, 40, 50), cSt = macroStatus(totCal, 2000, 2250);
+  document.getElementById('bar-p').style.width   = Math.min(totP   / 200   * 100, 100) + '%';
+  document.getElementById('bar-f').style.width   = Math.min(totF   / 50    * 100, 100) + '%';
+  document.getElementById('bar-cal').style.width = Math.min(totCal / 2300  * 100, 100) + '%';
+  document.getElementById('bar-p').className   = `mini-fill ${pSt}`;
+  document.getElementById('bar-f').className   = `mini-fill ${fSt}`;
+  document.getElementById('bar-cal').className = `mini-fill ${cSt}`;
+  document.getElementById('val-p').textContent   = `${totP} g / 180`;
+  document.getElementById('val-f').textContent   = `${totF} g / 40–45`;
+  document.getElementById('val-cal').textContent = `${totCal} kcal`;
+  document.getElementById('val-p').className   = `macro-row-val ${pSt}`;
+  document.getElementById('val-f').className   = `macro-row-val ${fSt}`;
+  document.getElementById('val-cal').className = `macro-row-val ${cSt}`;
+}
+
+// ─── Workout ──────────────────────────────────────────────────
+function renderWorkout() {
+  const dow = new Date().getDay();
+  const w   = WORKOUTS[dow];
+  const labelEl = document.getElementById('workout-label');
+  const titleEl = document.getElementById('workout-title');
+  const listEl  = document.getElementById('workout-list');
+  labelEl.textContent = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow];
+  if (w.rest) labelEl.classList.add('rest-label');
+  titleEl.textContent = w.label;
+  const state = getState();
+  w.items.forEach((item, i) => {
+    const key = `ex${i}`;
+    const li  = document.createElement('li');
+    li.dataset.key = key;
+    const cb = document.createElement('input'); cb.type = 'checkbox';
+    cb.checked = !!state[key];
+    li.appendChild(cb);
+    li.appendChild(document.createTextNode(item));
+    if (cb.checked) li.classList.add('done');
+    li.addEventListener('click', (e) => {
+      toggle(li, key, e.target.type === 'checkbox' ? e.target.checked : undefined);
+    });
+    listEl.appendChild(li);
+  });
+}
+
+// ─── Daily checklists ─────────────────────────────────────────
+function bindChecklist(listId) {
+  const state = getState();
+  document.querySelectorAll(`#${listId} li`).forEach(li => {
+    const key = li.dataset.key;
+    const cb  = li.querySelector('input[type=checkbox]');
+    cb.checked = !!state[key];
+    if (cb.checked) li.classList.add('done');
+    li.addEventListener('click', (e) => {
+      toggle(li, key, e.target.type === 'checkbox' ? e.target.checked : undefined);
+    });
+  });
+}
+function toggle(li, key, value) {
+  const cb = li.querySelector('input[type=checkbox]');
+  const newVal = value !== undefined ? value : !cb.checked;
+  cb.checked = newVal;
+  li.classList.toggle('done', newVal);
+  const state = getState(); state[key] = newVal; setState(state);
+  updateProgress();
+}
+function updateProgress() {
+  const all  = document.querySelectorAll('#morning-list li, #nutrition-list li, #activity-list li');
+  const done = [...all].filter(li => li.classList.contains('done')).length;
+  document.getElementById('progress-fill').style.width = Math.round(done / all.length * 100) + '%';
+  document.getElementById('progress-text').textContent = `${done} / ${all.length}`;
+}
+
+// ─── Date display ─────────────────────────────────────────────
+function renderDate() {
+  const now    = new Date();
+  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('day-name').textContent = days[now.getDay()];
+  document.getElementById('full-date').textContent =
+    `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('week-num').textContent = weekNumber();
+}
+
+// ─── Boot ─────────────────────────────────────────────────────
+async function init() {
+  await loadState();   // fetch from KV before touching any UI
+  renderDate();
+  renderWorkout();
+  bindChecklist('morning-list');
+  bindChecklist('nutrition-list');
+  bindChecklist('activity-list');
+  updateProgress();
+  const sel = getMealSelection();
+  renderAllMeals(sel);
+  bindShopList();
+  if (new Date().getDay() === 0) {
+    document.getElementById('weekly-review-card').style.display = 'block';
+    bindChecklist('weekly-list');
+  }
+}
+
+init();
+</script>
+</body>
+</html>

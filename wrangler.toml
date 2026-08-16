@@ -1,0 +1,7 @@
+name = "operation-80"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "STATE"
+id = "862cd0c9c955470583098512e8c115c1"
