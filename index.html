@@ -354,13 +354,16 @@
     top: 0;
     z-index: 100;
     margin: 0 -16px 14px;
-    padding: 9px 20px;
+    padding: 8px 20px;
     background: var(--card);
     border-bottom: 2px solid var(--theme-color, var(--accent));
+    backdrop-filter: blur(8px);
+  }
+  .theme-bar-top {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    backdrop-filter: blur(8px);
+    margin-bottom: 6px;
   }
   .theme-bar-name {
     font-size: 1.05rem;
@@ -374,6 +377,42 @@
     color: var(--muted);
     letter-spacing: .06em;
     text-transform: uppercase;
+  }
+  .theme-bar-manual {
+    font-size: .65rem;
+    color: var(--accent2);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+  .theme-pills {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .theme-pill {
+    font-size: .65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .theme-pill:hover { color: var(--text); border-color: var(--text); }
+  .theme-pill.active {
+    color: var(--bg);
+    background: var(--pill-color, var(--accent));
+    border-color: var(--pill-color, var(--accent));
+  }
+  .theme-pill.auto-pill.active {
+    color: var(--muted);
+    background: none;
+    border-color: var(--muted);
   }
 
   /* ── sync indicator ────────────────────────────────────── */
@@ -393,8 +432,12 @@
 <body>
 
 <div class="theme-bar" id="theme-bar">
-  <span class="theme-bar-name" id="theme-bar-name">—</span>
-  <span class="theme-bar-week" id="theme-bar-week">—</span>
+  <div class="theme-bar-top">
+    <span class="theme-bar-name" id="theme-bar-name">—</span>
+    <span class="theme-bar-week" id="theme-bar-week">—</span>
+    <span class="theme-bar-manual" id="theme-bar-manual"></span>
+  </div>
+  <div class="theme-pills" id="theme-pills"></div>
 </div>
 
 <div class="header">
@@ -553,12 +596,16 @@
   </ul>
 </div>
 
-<div style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:20px;padding-bottom:24px;">
-  Daily checks reset at midnight · Shopping list resets every Monday
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--muted);margin-top:20px;padding-bottom:24px;">
+  <span>Daily checks reset at midnight · Shopping list resets every Monday</span>
+  <span id="version-label" style="font-family:monospace;opacity:.5"></span>
 </div>
 <div class="sync-dot" id="sync-dot"></div>
 
 <script>
+// ─── Version (update manually on each deploy) ─────────────────
+const VERSION = '1.0.0';
+
 // ─── Plan start ───────────────────────────────────────────────
 const PLAN_START = new Date('2026-07-27');
 
@@ -904,8 +951,48 @@ function dayOfPlan() {
 function weekNumber() {
   return Math.min(Math.max(Math.floor(dayOfPlan() / 7) + 1, 1), 8);
 }
+function getPlanOverride()    { return CACHE['op80-plan-override'] ?? null; }
+function setPlanOverride(idx) {
+  if (idx === null) delete CACHE['op80-plan-override'];
+  else CACHE['op80-plan-override'] = idx;
+  _sync();
+}
+function currentPlanIndex() {
+  const override = getPlanOverride();
+  return override !== null ? override : (weekNumber() - 1) % 4;
+}
 function currentPlan() {
-  return WEEKLY_PLANS[(weekNumber() - 1) % 4];
+  return WEEKLY_PLANS[currentPlanIndex()];
+}
+function renderThemeBar() {
+  const plan      = currentPlan();
+  const activeIdx = currentPlanIndex();
+  const isManual  = getPlanOverride() !== null;
+  document.getElementById('theme-bar-name').textContent  = plan.displayName;
+  document.getElementById('theme-bar-week').textContent  = `Week ${weekNumber()} of 8`;
+  document.getElementById('theme-bar-manual').textContent = isManual ? 'manual' : '';
+  document.getElementById('theme-bar').style.setProperty('--theme-color', plan.color);
+  const autoIdx = (weekNumber() - 1) % 4;
+  const pills = [
+    `<button class="theme-pill auto-pill${!isManual ? ' active' : ''}" onclick="selectPlan(null)">Auto</button>`
+  ].concat(WEEKLY_PLANS.map((p, i) =>
+    `<button class="theme-pill${i === activeIdx && isManual ? ' active' : ''}" style="--pill-color:${p.color}" onclick="selectPlan(${i})">${p.displayName.split(' ')[0]}</button>`
+  ));
+  document.getElementById('theme-pills').innerHTML = pills.join('');
+}
+function selectPlan(idx) {
+  setPlanOverride(idx);
+  renderThemeBar();
+  const sel = defaultIndices();
+  saveMealSelection(sel);
+  renderAllMeals(sel);
+  renderShoppingList();
+  document.querySelectorAll('#shop-body .shop-list li').forEach(li => {
+    li.addEventListener('click', (e) => {
+      toggleShopItem(li, li.dataset.skey, e.target.type === 'checkbox' ? e.target.checked : undefined);
+    });
+  });
+  updateShopProgress();
 }
 
 // ─── Shopping list ────────────────────────────────────────────
@@ -1158,11 +1245,7 @@ async function init() {
   bindChecklist('nutrition-list');
   bindChecklist('activity-list');
   updateProgress();
-  const plan = currentPlan();
-  const wn   = weekNumber();
-  document.getElementById('theme-bar-name').textContent = plan.displayName;
-  document.getElementById('theme-bar-week').textContent = `Week ${wn} of 8`;
-  document.getElementById('theme-bar').style.setProperty('--theme-color', plan.color);
+  renderThemeBar();
   const sel = getMealSelection();
   renderAllMeals(sel);
   bindShopList();
@@ -1170,6 +1253,7 @@ async function init() {
     document.getElementById('weekly-review-card').style.display = 'block';
     bindChecklist('weekly-list');
   }
+  document.getElementById('version-label').textContent = `v${VERSION}`;
 }
 
 init();
