@@ -428,17 +428,17 @@
   .sync-dot.syncing { opacity: 1; background: var(--yellow); }
   .sync-dot.saved   { opacity: 1; background: var(--green); }
   #version-label {
-    position: fixed;
-    bottom: 14px;
-    left: 16px;
-    font-size: .62rem;
+    display: block;
+    text-align: right;
+    font-size: .65rem;
     font-family: monospace;
     color: var(--muted);
-    opacity: .4;
+    opacity: .5;
     text-decoration: none;
+    padding-bottom: 24px;
     transition: opacity .2s;
   }
-  #version-label:hover { opacity: .9; }
+  #version-label:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -608,13 +608,12 @@
   </ul>
 </div>
 
-<div style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:20px;padding-bottom:40px;">
-  Daily checks reset at midnight · Shopping list resets every Monday
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--muted);margin-top:20px;padding-bottom:24px;">
+  <span>Daily checks reset at midnight · Shopping list resets every Monday</span>
+  <a id="version-label" target="_blank" rel="noopener"></a>
 </div>
-<a id="version-label" target="_blank" rel="noopener"></a>
 <div class="sync-dot" id="sync-dot"></div>
 
-<script src="/_version.js"></script>
 <script>
 
 // ─── Plan start ───────────────────────────────────────────────
@@ -1087,7 +1086,12 @@ function defaultIndices() {
 }
 function getMealSelection() {
   const state = getState();
-  if (state.meals) return state.meals;
+  const m = currentPlan().meals;
+  if (state.meals) {
+    const s = state.meals;
+    const valid = ['breakfast','lunch','snack','dinner'].every(sl => s[sl] !== undefined && s[sl] < m[sl].length);
+    if (valid) return s;
+  }
   const def = defaultIndices();
   saveMealSelection(def);
   return def;
@@ -1247,6 +1251,24 @@ function renderDate() {
   document.getElementById('week-num').textContent = weekNumber();
 }
 
+// ─── Version ──────────────────────────────────────────────────
+async function loadVersionHash() {
+  const el = document.getElementById('version-label');
+  el.textContent = '—';
+  try {
+    const res = await fetch('/api/version');
+    const v   = res.ok ? (await res.text()).trim() : '';
+    if (v) {
+      el.textContent = v;
+      el.href = 'https://github.com/shtlrs/operation-80/commit/' + v;
+    } else {
+      el.textContent = '';
+    }
+  } catch {
+    el.textContent = '';
+  }
+}
+
 // ─── Boot ─────────────────────────────────────────────────────
 async function init() {
   await loadState();   // fetch from KV before touching any UI
@@ -1264,12 +1286,7 @@ async function init() {
     document.getElementById('weekly-review-card').style.display = 'block';
     bindChecklist('weekly-list');
   }
-  const v = (typeof VERSION !== 'undefined' && VERSION) ? VERSION : '';
-  if (v) {
-    const el = document.getElementById('version-label');
-    el.textContent = v;
-    el.href = `https://github.com/shtlrs/operation-80/commit/${v}`;
-  }
+  await loadVersionHash();
 }
 
 init();
