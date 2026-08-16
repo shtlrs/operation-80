@@ -427,6 +427,18 @@
   }
   .sync-dot.syncing { opacity: 1; background: var(--yellow); }
   .sync-dot.saved   { opacity: 1; background: var(--green); }
+  #version-label {
+    position: fixed;
+    bottom: 14px;
+    left: 16px;
+    font-size: .62rem;
+    font-family: monospace;
+    color: var(--muted);
+    opacity: .4;
+    text-decoration: none;
+    transition: opacity .2s;
+  }
+  #version-label:hover { opacity: .9; }
 </style>
 </head>
 <body>
@@ -596,15 +608,14 @@
   </ul>
 </div>
 
-<div style="display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--muted);margin-top:20px;padding-bottom:24px;">
-  <span>Daily checks reset at midnight · Shopping list resets every Monday</span>
-  <span id="version-label" style="font-family:monospace;opacity:.5"></span>
+<div style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:20px;padding-bottom:40px;">
+  Daily checks reset at midnight · Shopping list resets every Monday
 </div>
+<a id="version-label" target="_blank" rel="noopener"></a>
 <div class="sync-dot" id="sync-dot"></div>
 
+<script src="/_version.js"></script>
 <script>
-// ─── Version (update manually on each deploy) ─────────────────
-const VERSION = '1.0.0';
 
 // ─── Plan start ───────────────────────────────────────────────
 const PLAN_START = new Date('2026-07-27');
@@ -1253,7 +1264,12 @@ async function init() {
     document.getElementById('weekly-review-card').style.display = 'block';
     bindChecklist('weekly-list');
   }
-  document.getElementById('version-label').textContent = `v${VERSION}`;
+  const v = (typeof VERSION !== 'undefined' && VERSION) ? VERSION : '';
+  if (v) {
+    const el = document.getElementById('version-label');
+    el.textContent = v;
+    el.href = `https://github.com/shtlrs/operation-80/commit/${v}`;
+  }
 }
 
 init();
