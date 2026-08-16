@@ -3,7 +3,6 @@ set -e
 
 HASH=$(git rev-parse --short HEAD 2>/dev/null)
 [ -z "$HASH" ] && HASH=dev
-echo "const VERSION='$HASH';" > _version.js
 echo "Built version: $HASH"
 
 ENV=$(printf "production\npreview\nother" | fzf --prompt="Deploy to: " --height=10 --border)
@@ -22,3 +21,5 @@ else
 fi
 
 npx wrangler pages deploy . --project-name operation80 --branch "$BRANCH"
+npx wrangler kv key put --namespace-id=862cd0c9c955470583098512e8c115c1 "app-version" "$HASH" --remote
+echo "Version $HASH written to KV."
