@@ -348,6 +348,34 @@
     .targets-grid { grid-template-columns: 1fr; }
   }
 
+  /* ── sticky theme bar ──────────────────────────────────── */
+  .theme-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    margin: 0 -16px 14px;
+    padding: 9px 20px;
+    background: var(--card);
+    border-bottom: 2px solid var(--theme-color, var(--accent));
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    backdrop-filter: blur(8px);
+  }
+  .theme-bar-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--theme-color, var(--accent));
+  }
+  .theme-bar-week {
+    font-size: .72rem;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
   /* ── sync indicator ────────────────────────────────────── */
   .sync-dot {
     position: fixed;
@@ -363,6 +391,11 @@
 </style>
 </head>
 <body>
+
+<div class="theme-bar" id="theme-bar">
+  <span class="theme-bar-name" id="theme-bar-name">—</span>
+  <span class="theme-bar-week" id="theme-bar-week">—</span>
+</div>
 
 <div class="header">
   <div>
@@ -400,75 +433,7 @@
 
   <div class="shop-body" id="shop-body">
     <div class="shop-divider"></div>
-
-    <div class="shop-category">
-      <div class="shop-category-title">Protein</div>
-      <ul class="shop-list" id="shop-protein">
-        <li data-skey="sp1"><input type="checkbox"><span class="shop-item-name">Chicken breast</span><span class="shop-item-qty">3 kg</span></li>
-        <li data-skey="sp2"><input type="checkbox"><span class="shop-item-name">Frozen white fish</span><span class="shop-item-qty">1 kg</span></li>
-        <li data-skey="sp3"><input type="checkbox"><span class="shop-item-name">Eggs</span><span class="shop-item-qty">24</span></li>
-        <li data-skey="sp4"><input type="checkbox"><span class="shop-item-name">0% Greek yogurt / skyr</span><span class="shop-item-qty">3 kg</span></li>
-        <li data-skey="sp5"><input type="checkbox"><span class="shop-item-name">Cottage cheese</span><span class="shop-item-qty">2 kg</span></li>
-        <li data-skey="sp6">
-          <input type="checkbox">
-          <span class="shop-item-name">Canned light tuna</span>
-          <span class="shop-item-qty">4 cans</span>
-        </li>
-      </ul>
-      <div class="shop-note" style="padding-left:28px">Tuna: use max 3–4 meals / week</div>
-    </div>
-
-    <div class="shop-category">
-      <div class="shop-category-title">Carbs</div>
-      <ul class="shop-list" id="shop-carbs">
-        <li data-skey="sc1"><input type="checkbox"><span class="shop-item-name">Rice (dry)</span><span class="shop-item-qty">1 kg</span></li>
-        <li data-skey="sc2"><input type="checkbox"><span class="shop-item-name">Potatoes</span><span class="shop-item-qty">3 kg</span></li>
-        <li data-skey="sc3"><input type="checkbox"><span class="shop-item-name">Oats</span><span class="shop-item-qty">700 g</span></li>
-        <li data-skey="sc4"><input type="checkbox"><span class="shop-item-name">High-fiber crackers</span><span class="shop-item-qty">400 g</span></li>
-      </ul>
-    </div>
-
-    <div class="shop-category">
-      <div class="shop-category-title">Vegetables</div>
-      <ul class="shop-list" id="shop-veg">
-        <li data-skey="sv1"><input type="checkbox"><span class="shop-item-name">Broccoli</span><span class="shop-item-qty">1 kg</span></li>
-        <li data-skey="sv2"><input type="checkbox"><span class="shop-item-name">Green beans</span><span class="shop-item-qty">1 kg</span></li>
-        <li data-skey="sv3"><input type="checkbox"><span class="shop-item-name">Mixed vegetables (frozen)</span><span class="shop-item-qty">1 kg</span></li>
-        <li data-skey="sv4"><input type="checkbox"><span class="shop-item-name">Carrots</span><span class="shop-item-qty">1 kg</span></li>
-        <li data-skey="sv5"><input type="checkbox"><span class="shop-item-name">Spinach</span><span class="shop-item-qty">500 g</span></li>
-        <li data-skey="sv6"><input type="checkbox"><span class="shop-item-name">Tomatoes</span><span class="shop-item-qty">700 g</span></li>
-        <li data-skey="sv7"><input type="checkbox"><span class="shop-item-name">Cucumbers</span><span class="shop-item-qty">×2</span></li>
-        <li data-skey="sv8"><input type="checkbox"><span class="shop-item-name">Bell peppers</span><span class="shop-item-qty">×4</span></li>
-        <li data-skey="sv9"><input type="checkbox"><span class="shop-item-name">Salad bags</span><span class="shop-item-qty">×2</span></li>
-      </ul>
-    </div>
-
-    <div class="shop-category">
-      <div class="shop-category-title">Fiber Sources</div>
-      <ul class="shop-list" id="shop-fiber">
-        <li data-skey="sf1"><input type="checkbox"><span class="shop-item-name">Kidney beans (canned)</span><span class="shop-item-qty">4 cans</span></li>
-        <li data-skey="sf2"><input type="checkbox"><span class="shop-item-name">Chickpeas (canned)</span><span class="shop-item-qty">2 cans</span></li>
-      </ul>
-    </div>
-
-    <div class="shop-category">
-      <div class="shop-category-title">Fruit</div>
-      <ul class="shop-list" id="shop-fruit">
-        <li data-skey="sft1"><input type="checkbox"><span class="shop-item-name">Apples</span><span class="shop-item-qty">×7</span></li>
-        <li data-skey="sft2"><input type="checkbox"><span class="shop-item-name">Bananas</span><span class="shop-item-qty">×7</span></li>
-        <li data-skey="sft3"><input type="checkbox"><span class="shop-item-name">Pears</span><span class="shop-item-qty">×4</span></li>
-        <li data-skey="sft4"><input type="checkbox"><span class="shop-item-name">Frozen berries</span><span class="shop-item-qty">700 g</span></li>
-      </ul>
-    </div>
-
-    <div class="shop-category">
-      <div class="shop-category-title">Fats</div>
-      <ul class="shop-list" id="shop-fats">
-        <li data-skey="sg1"><input type="checkbox"><span class="shop-item-name">Peanut butter</span><span class="shop-item-qty">1 jar</span></li>
-        <li data-skey="sg2"><input type="checkbox"><span class="shop-item-name">Olive oil</span><span class="shop-item-qty">1 bottle</span></li>
-      </ul>
-    </div>
-
+    <div id="shop-categories"></div>
     <div class="shop-progress-bar">
       <div class="shop-progress-fill" id="shop-progress-fill" style="width:0%"></div>
     </div>
@@ -597,147 +562,275 @@
 // ─── Plan start ───────────────────────────────────────────────
 const PLAN_START = new Date('2026-07-27');
 
-// ─── Meal data ────────────────────────────────────────────────
-// Macros calculated from per-100g references:
-//   chicken breast raw: 165 kcal, 31g P  |  white fish raw: 82 kcal, 18g P
-//   tuna canned drained: 116 kcal, 26g P  |  egg: 70 kcal, 6g P
-//   0% Greek yogurt: 59 kcal, 10g P  |  cottage cheese (low-fat): 80 kcal, 11g P
-//   oats dry: 389 kcal, 17g P, 10g F  |  rice cooked: 130 kcal, 2.7g P
-//   potatoes boiled: 90 kcal, 2g P, 2g F  |  crackers: 330 kcal, 10g P, 18g F
-//   kidney beans cooked: 127 kcal, 8.7g P, 7.4g F  |  chickpeas cooked: 164 kcal, 8.9g P, 7.6g F
-//   broccoli: 34 kcal, 2.8g P, 2.6g F  |  mixed veg avg: 30 kcal, 2.5g P, 3g F
-//   bell pepper: 31 kcal, 1g P, 2g F  |  spinach: 23 kcal, 2.9g P, 2.2g F
-//   carrots: 41 kcal, 0.9g P, 2.8g F  |  green beans: 31 kcal, 1.8g P, 3.4g F
-//   berries frozen: 50 kcal, 1g P, 4g F  |  banana ~120g: 90 kcal, 1g P, 2.5g F
-//   apple ~180g: 94 kcal, 0.5g P, 2.7g F  |  pear ~180g: 103 kcal, 0.7g P, 3.4g F
-//   peanut butter: 590 kcal, 25g P, 6g F  |  olive oil: 884 kcal (5g drizzle = 44 kcal)
-const MEALS = {
-  breakfast: [
-    {
-      name: "Classic Yogurt Bowl",
-      items: ["0% Greek yogurt · 500 g", "Frozen berries · 100 g", "Peanut butter · 20 g", "High-fiber crackers · 40 g"],
-      protein: 59, fiber: 12, cal: 595
+// ─── Weekly meal plans (4 themes, cycles weeks 1–4 then 5–8) ──
+const WEEKLY_PLANS = [
+  // ── WEEK 1: Classic Comfort ──────────────────────────────────
+  {
+    name: "Classic Comfort",
+    displayName: "Classic Comfort",
+    color: "#f5c842",
+    meals: {
+      breakfast: [
+        { name: "Honey Berry Skyr Bowl", items: ["Skyr / 0% Greek yogurt · 400 g", "Frozen berries · 150 g", "Honey · 15 g", "Oats · 30 g (topping)"], protein: 48, fiber: 11, cal: 540 },
+        { name: "Cinnamon Oat & Cottage", items: ["Oats · 80 g", "Cottage cheese · 250 g", "Banana · 1", "Honey · 10 g", "Cinnamon"], protein: 47, fiber: 10, cal: 680 },
+        { name: "Scrambled Eggs & Apple", items: ["Eggs · 4 (scrambled)", "Cottage cheese · 200 g", "Apple · 1", "High-fiber crackers · 30 g"], protein: 51, fiber: 8, cal: 646 },
+        { name: "Berry PB Overnight Oats", items: ["Oats · 70 g", "0% Greek yogurt · 300 g", "Frozen berries · 100 g", "Peanut butter · 20 g"], protein: 48, fiber: 13, cal: 665 }
+      ],
+      lunch: [
+        { name: "Honey Garlic Chicken Rice", items: ["Chicken breast · 150 g", "Rice · 200 g (cooked)", "Broccoli · 300 g", "Honey · 10 g", "Garlic · 2 cloves"], protein: 62, fiber: 13, cal: 665 },
+        { name: "Chicken Potato & Spinach", items: ["Chicken breast · 150 g", "Potatoes · 300 g", "Spinach · 200 g", "Olive oil · 5 g"], protein: 58, fiber: 10, cal: 608 },
+        { name: "Tuna Chickpea Cucumber Bowl", items: ["Canned tuna · 2 cans (240 g)", "Chickpeas · 150 g", "Cucumber · 200 g", "Tomatoes · 200 g"], protein: 78, fiber: 16, cal: 656, tuna: true },
+        { name: "Egg Veggie Hash", items: ["Eggs · 4", "Potatoes · 250 g", "Broccoli · 200 g", "Carrots · 150 g", "Cottage cheese · 100 g"], protein: 47, fiber: 14, cal: 714 }
+      ],
+      snack: [
+        { name: "Honey Cottage & Apple", items: ["Cottage cheese · 300 g", "Apple · 1", "Honey · 10 g", "Cinnamon"], protein: 33, fiber: 5, cal: 420 },
+        { name: "Berry Skyr Pot", items: ["Skyr / 0% Greek yogurt · 350 g", "Frozen berries · 100 g", "Honey · 10 g"], protein: 38, fiber: 6, cal: 360 },
+        { name: "PB Banana Crackers", items: ["Peanut butter · 25 g", "Banana · 1", "High-fiber crackers · 30 g", "Cottage cheese · 150 g"], protein: 31, fiber: 7, cal: 490 },
+        { name: "Boiled Eggs & Pear", items: ["Eggs · 3 (hard boiled)", "Cottage cheese · 200 g", "Pear · 1"], protein: 40, fiber: 5, cal: 465 }
+      ],
+      dinner: [
+        { name: "Baked Chicken & Potatoes", items: ["Chicken breast · 130 g", "Potatoes · 300 g", "Broccoli · 250 g", "Olive oil · 5 g"], protein: 51, fiber: 12, cal: 558 },
+        { name: "Fish, Spinach & Potatoes", items: ["White fish · 180 g", "Potatoes · 250 g", "Spinach · 200 g", "Olive oil · 5 g"], protein: 45, fiber: 9, cal: 498 },
+        { name: "Chicken Carrot Rice Bowl", items: ["Chicken breast · 130 g", "Rice · 150 g (cooked)", "Carrots · 200 g", "Cucumber · 150 g"], protein: 52, fiber: 8, cal: 511 },
+        { name: "Egg & Veggie Pan", items: ["Eggs · 3", "Tomatoes · 250 g", "Spinach · 200 g", "Potatoes · 200 g", "Olive oil · 5 g"], protein: 29, fiber: 9, cal: 460 }
+      ]
     },
-    {
-      name: "Oat & Yogurt Power",
-      items: ["Oats · 70 g", "0% Greek yogurt · 300 g", "Banana · 1", "Peanut butter · 15 g"],
-      protein: 47, fiber: 10, cal: 628
+    shopping: [
+      { category: "Protein", items: [
+        { key: "sp1", name: "Chicken breast", qty: "2 kg" },
+        { key: "sp2", name: "White fish (frozen)", qty: "500 g" },
+        { key: "sp3", name: "Canned tuna (light)", qty: "4 cans", note: "Max 3–4 meals/week" },
+        { key: "sp4", name: "Eggs", qty: "18" },
+        { key: "sp5", name: "Skyr / 0% Greek yogurt", qty: "2 kg" },
+        { key: "sp6", name: "Cottage cheese (low-fat)", qty: "2 kg" }
+      ]},
+      { category: "Carbs", items: [
+        { key: "sc1", name: "Rice (dry)", qty: "500 g" },
+        { key: "sc2", name: "Potatoes", qty: "3 kg" },
+        { key: "sc3", name: "Oats", qty: "500 g" },
+        { key: "sc4", name: "High-fiber crackers", qty: "400 g" },
+        { key: "sc5", name: "Chickpeas (canned)", qty: "2 cans" }
+      ]},
+      { category: "Vegetables", items: [
+        { key: "sv1", name: "Broccoli", qty: "1.5 kg" },
+        { key: "sv2", name: "Spinach", qty: "500 g" },
+        { key: "sv3", name: "Carrots", qty: "1 kg" },
+        { key: "sv4", name: "Cucumber", qty: "×3" },
+        { key: "sv5", name: "Tomatoes", qty: "700 g" }
+      ]},
+      { category: "Fruit & Sweet", items: [
+        { key: "sft1", name: "Frozen berries", qty: "700 g" },
+        { key: "sft2", name: "Bananas", qty: "×7" },
+        { key: "sft3", name: "Apples", qty: "×5" },
+        { key: "sft4", name: "Pears", qty: "×4" },
+        { key: "sft5", name: "Honey", qty: "1 jar" }
+      ]},
+      { category: "Fats", items: [
+        { key: "sg1", name: "Peanut butter", qty: "1 jar" },
+        { key: "sg2", name: "Olive oil", qty: "1 bottle" }
+      ]}
+    ]
+  },
+
+  // ── WEEK 2: Asian-Inspired ───────────────────────────────────
+  {
+    name: "Asian-Inspired",
+    displayName: "Asian Fusion",
+    color: "#2dd4bf",
+    meals: {
+      breakfast: [
+        { name: "Tropical Yogurt Bowl", items: ["Skyr / 0% Greek yogurt · 400 g", "Canned pineapple · 150 g (in juice)", "Oats · 40 g", "Banana · 1"], protein: 49, fiber: 9, cal: 610 },
+        { name: "Savoury Egg Fried Rice", items: ["Eggs · 3", "Rice · 150 g (cooked)", "Cottage cheese · 200 g", "Soy sauce · splash"], protein: 52, fiber: 3, cal: 630 },
+        { name: "Orange Oat Bowl", items: ["Oats · 80 g", "0% Greek yogurt · 300 g", "Orange · 1 (segments)", "Honey · 10 g"], protein: 41, fiber: 9, cal: 635 },
+        { name: "Ginger Cottage & Pineapple", items: ["Cottage cheese · 400 g", "Canned pineapple · 150 g (in juice)", "High-fiber crackers · 30 g", "Ground ginger · pinch"], protein: 48, fiber: 5, cal: 540 }
+      ],
+      lunch: [
+        { name: "Soy Ginger Chicken Rice", items: ["Chicken breast · 150 g", "Rice · 200 g (cooked)", "Green beans · 200 g", "Carrots · 150 g", "Soy sauce · 1 tbsp"], protein: 63, fiber: 12, cal: 665 },
+        { name: "Fish & Egg Noodles", items: ["White fish · 180 g", "Egg noodles · 80 g (dry)", "Cabbage · 200 g", "Carrots · 100 g", "Soy sauce"], protein: 55, fiber: 9, cal: 670 },
+        { name: "Chicken Bell Pepper Noodles", items: ["Chicken breast · 150 g", "Egg noodles · 80 g (dry)", "Bell peppers · 200 g", "Green beans · 150 g", "Soy sauce"], protein: 62, fiber: 8, cal: 710 },
+        { name: "Tuna Rice & Cabbage Slaw", items: ["Canned tuna · 2 cans (240 g)", "Rice · 150 g (cooked)", "Cabbage · 250 g", "Carrots · 100 g"], protein: 74, fiber: 10, cal: 620, tuna: true }
+      ],
+      snack: [
+        { name: "Pineapple Skyr Pot", items: ["Skyr / 0% Greek yogurt · 400 g", "Canned pineapple · 100 g (in juice)", "High-fiber crackers · 20 g"], protein: 44, fiber: 5, cal: 400 },
+        { name: "Orange & Cottage Cheese", items: ["Cottage cheese · 300 g", "Orange · 1", "High-fiber crackers · 30 g"], protein: 36, fiber: 5, cal: 440 },
+        { name: "Boiled Eggs & Banana", items: ["Eggs · 3 (hard boiled)", "Banana · 1", "0% Greek yogurt · 200 g"], protein: 36, fiber: 4, cal: 420 }
+      ],
+      dinner: [
+        { name: "Sesame Chicken & Rice", items: ["Chicken breast · 130 g", "Rice · 150 g (cooked)", "Green beans · 250 g", "Soy sauce · 1 tbsp", "Olive oil · 5 g"], protein: 52, fiber: 11, cal: 540 },
+        { name: "Fish Noodle Bowl", items: ["White fish · 180 g", "Egg noodles · 60 g (dry)", "Cabbage · 200 g", "Carrots · 100 g"], protein: 46, fiber: 7, cal: 505 },
+        { name: "Stir-Fry Chicken & Veg", items: ["Chicken breast · 130 g", "Bell peppers · 200 g", "Green beans · 200 g", "Rice · 100 g (cooked)", "Soy sauce"], protein: 49, fiber: 9, cal: 467 },
+        { name: "Egg & Cabbage Rice Bowl", items: ["Eggs · 4", "Cabbage · 300 g", "Carrots · 200 g", "Rice · 100 g (cooked)", "Soy sauce"], protein: 34, fiber: 12, cal: 470 }
+      ]
     },
-    {
-      name: "Egg & Curd Plate",
-      items: ["Eggs · 4 (scrambled)", "Cottage cheese · 200 g", "High-fiber crackers · 40 g", "Apple · 1"],
-      protein: 51, fiber: 10, cal: 666
+    shopping: [
+      { category: "Protein", items: [
+        { key: "sp1", name: "Chicken breast", qty: "2 kg" },
+        { key: "sp2", name: "White fish (frozen)", qty: "700 g" },
+        { key: "sp3", name: "Canned tuna (light)", qty: "4 cans", note: "Max 3–4 meals/week" },
+        { key: "sp4", name: "Eggs", qty: "18" },
+        { key: "sp5", name: "Skyr / 0% Greek yogurt", qty: "2 kg" },
+        { key: "sp6", name: "Cottage cheese (low-fat)", qty: "1.5 kg" }
+      ]},
+      { category: "Carbs", items: [
+        { key: "sc1", name: "Rice (dry)", qty: "700 g" },
+        { key: "sc2", name: "Egg noodles", qty: "400 g" },
+        { key: "sc3", name: "Oats", qty: "400 g" },
+        { key: "sc4", name: "High-fiber crackers", qty: "300 g" }
+      ]},
+      { category: "Vegetables", items: [
+        { key: "sv1", name: "Green beans", qty: "1 kg" },
+        { key: "sv2", name: "Carrots", qty: "1 kg" },
+        { key: "sv3", name: "Bell peppers", qty: "×4" },
+        { key: "sv4", name: "Cabbage", qty: "1 head" }
+      ]},
+      { category: "Fruit & Sweet", items: [
+        { key: "sft1", name: "Canned pineapple in juice", qty: "2 cans" },
+        { key: "sft2", name: "Bananas", qty: "×5" },
+        { key: "sft3", name: "Oranges", qty: "×5" },
+        { key: "sft4", name: "Honey", qty: "1 jar" }
+      ]},
+      { category: "Pantry", items: [
+        { key: "sp7", name: "Soy sauce (low sodium)", qty: "1 bottle" },
+        { key: "sp8", name: "Ground ginger", qty: "1 jar" },
+        { key: "sg1", name: "Olive oil", qty: "1 bottle" }
+      ]}
+    ]
+  },
+
+  // ── WEEK 3: Tex-Mex ─────────────────────────────────────────
+  {
+    name: "Tex-Mex",
+    displayName: "Tex-Mex",
+    color: "#ff6584",
+    meals: {
+      breakfast: [
+        { name: "Mango Skyr Bowl", items: ["Skyr / 0% Greek yogurt · 400 g", "Mango · 150 g (fresh or frozen)", "Oats · 40 g", "Honey · 10 g"], protein: 47, fiber: 8, cal: 570 },
+        { name: "Mexican Scrambled Eggs", items: ["Eggs · 4", "Tomatoes · 200 g", "Bell pepper · 150 g", "Cottage cheese · 150 g", "Paprika + cumin"], protein: 48, fiber: 5, cal: 560 },
+        { name: "Mango Oat Bowl", items: ["Oats · 70 g", "0% Greek yogurt · 300 g", "Mango · 150 g", "Banana · 1"], protein: 44, fiber: 9, cal: 660 },
+        { name: "Date PB Cottage Bowl", items: ["Cottage cheese · 350 g", "Dates · 3 (pitted)", "Peanut butter · 20 g", "High-fiber crackers · 30 g"], protein: 46, fiber: 9, cal: 660 }
+      ],
+      lunch: [
+        { name: "Chicken Burrito Bowl", items: ["Chicken breast · 150 g", "Rice · 200 g (cooked)", "Kidney beans · 150 g", "Bell pepper · 150 g", "Tomatoes · 150 g", "Cumin + paprika"], protein: 72, fiber: 19, cal: 745 },
+        { name: "Tuna Black Bean Salad", items: ["Canned tuna · 2 cans (240 g)", "Kidney beans · 150 g", "Corn · 100 g (canned)", "Tomatoes · 200 g", "Lime juice"], protein: 80, fiber: 16, cal: 640, tuna: true },
+        { name: "Spiced Chicken & Chickpeas", items: ["Chicken breast · 150 g", "Chickpeas · 150 g", "Bell peppers · 200 g", "Tomatoes · 200 g", "Cumin + paprika + garlic"], protein: 67, fiber: 14, cal: 640 },
+        { name: "Egg & Bean Hash", items: ["Eggs · 3", "Kidney beans · 150 g", "Bell peppers · 200 g", "Corn · 100 g (canned)", "Cottage cheese · 100 g"], protein: 43, fiber: 14, cal: 570 }
+      ],
+      snack: [
+        { name: "Date & Cottage Cheese", items: ["Cottage cheese · 300 g", "Dates · 4 (pitted)", "High-fiber crackers · 20 g"], protein: 34, fiber: 8, cal: 490 },
+        { name: "Mango Skyr Pot", items: ["Skyr / 0% Greek yogurt · 350 g", "Mango · 150 g", "Honey · 10 g"], protein: 38, fiber: 5, cal: 420 },
+        { name: "Dark Chocolate Yogurt", items: ["0% Greek yogurt · 300 g", "Dark chocolate 85% · 20 g", "Banana · 1"], protein: 33, fiber: 5, cal: 430 }
+      ],
+      dinner: [
+        { name: "Chicken Fajita Pan", items: ["Chicken breast · 130 g", "Bell peppers · 250 g", "Onion · 1", "Rice · 150 g (cooked)", "Cumin + paprika"], protein: 52, fiber: 7, cal: 524 },
+        { name: "Spiced Fish & Rice", items: ["White fish · 180 g", "Rice · 150 g (cooked)", "Tomatoes · 200 g", "Corn · 100 g (canned)", "Lime + cumin"], protein: 44, fiber: 7, cal: 498 },
+        { name: "Tuna & Bean Bowl", items: ["Canned tuna · 1 can (120 g)", "Kidney beans · 150 g", "Tomatoes · 200 g", "Bell pepper · 150 g"], protein: 41, fiber: 14, cal: 415, tuna: true },
+        { name: "Egg & Chickpea Skillet", items: ["Eggs · 3", "Chickpeas · 150 g", "Bell peppers · 150 g", "Tomatoes · 200 g", "Olive oil · 5 g"], protein: 31, fiber: 12, cal: 500 }
+      ]
     },
-    {
-      name: "Cottage Cheese Crunch",
-      items: ["Cottage cheese · 350 g", "High-fiber crackers · 40 g", "Frozen berries · 100 g", "Peanut butter · 20 g"],
-      protein: 49, fiber: 12, cal: 580
+    shopping: [
+      { category: "Protein", items: [
+        { key: "sp1", name: "Chicken breast", qty: "2 kg" },
+        { key: "sp2", name: "White fish (frozen)", qty: "500 g" },
+        { key: "sp3", name: "Canned tuna (light)", qty: "4 cans", note: "Max 3–4 meals/week" },
+        { key: "sp4", name: "Eggs", qty: "18" },
+        { key: "sp5", name: "Skyr / 0% Greek yogurt", qty: "2 kg" },
+        { key: "sp6", name: "Cottage cheese (low-fat)", qty: "1.5 kg" }
+      ]},
+      { category: "Carbs & Legumes", items: [
+        { key: "sc1", name: "Rice (dry)", qty: "600 g" },
+        { key: "sc2", name: "Kidney beans (canned)", qty: "4 cans" },
+        { key: "sc3", name: "Chickpeas (canned)", qty: "2 cans" },
+        { key: "sc4", name: "Corn (canned)", qty: "2 cans" },
+        { key: "sc5", name: "High-fiber crackers", qty: "300 g" },
+        { key: "sc6", name: "Oats", qty: "300 g" }
+      ]},
+      { category: "Vegetables", items: [
+        { key: "sv1", name: "Bell peppers", qty: "×6" },
+        { key: "sv2", name: "Tomatoes", qty: "1.5 kg" },
+        { key: "sv3", name: "Onions", qty: "×4" }
+      ]},
+      { category: "Fruit & Sweet", items: [
+        { key: "sft1", name: "Mango (fresh or frozen)", qty: "500 g" },
+        { key: "sft2", name: "Bananas", qty: "×5" },
+        { key: "sft3", name: "Dates (pitted)", qty: "200 g" },
+        { key: "sft4", name: "Dark chocolate 85%+", qty: "100 g" },
+        { key: "sft5", name: "Honey", qty: "1 jar" }
+      ]},
+      { category: "Pantry", items: [
+        { key: "sp7", name: "Ground cumin", qty: "1 jar" },
+        { key: "sp8", name: "Smoked paprika", qty: "1 jar" },
+        { key: "sg1", name: "Peanut butter", qty: "1 jar" },
+        { key: "sg2", name: "Olive oil", qty: "1 bottle" }
+      ]}
+    ]
+  },
+
+  // ── WEEK 4: Hearty Comfort ───────────────────────────────────
+  {
+    name: "Hearty Comfort",
+    displayName: "Hearty Comfort",
+    color: "#4caf82",
+    meals: {
+      breakfast: [
+        { name: "Cinnamon Apple Oats", items: ["Oats · 80 g", "0% Greek yogurt · 300 g", "Apple · 1 (diced)", "Honey · 15 g", "Cinnamon"], protein: 42, fiber: 11, cal: 670 },
+        { name: "Date PB Power Bowl", items: ["Cottage cheese · 400 g", "Dates · 4 (pitted)", "Peanut butter · 20 g", "Oats · 30 g"], protein: 52, fiber: 9, cal: 680 },
+        { name: "Mushroom Egg Scramble", items: ["Eggs · 4", "Mushrooms · 200 g", "Spinach · 150 g", "Cottage cheese · 200 g", "High-fiber crackers · 30 g"], protein: 55, fiber: 6, cal: 590 },
+        { name: "Dark Choc Oat Bowl", items: ["Oats · 80 g", "Skyr / 0% Greek yogurt · 350 g", "Dark chocolate 85% · 20 g", "Banana · 1"], protein: 49, fiber: 12, cal: 670 }
+      ],
+      lunch: [
+        { name: "Chicken Tomato Pasta", items: ["Chicken breast · 150 g", "Pasta · 80 g (dry)", "Zucchini · 200 g", "Tomatoes · 200 g", "Olive oil · 5 g"], protein: 60, fiber: 9, cal: 703 },
+        { name: "Tuna Pasta Salad", items: ["Canned tuna · 2 cans (240 g)", "Pasta · 80 g (dry)", "Spinach · 150 g", "Cucumber · 150 g"], protein: 76, fiber: 7, cal: 660, tuna: true },
+        { name: "Chicken Mushroom Potato", items: ["Chicken breast · 150 g", "Potatoes · 250 g", "Mushrooms · 250 g", "Spinach · 150 g", "Olive oil · 5 g"], protein: 57, fiber: 7, cal: 595 },
+        { name: "Egg Zucchini Pasta", items: ["Eggs · 3", "Pasta · 80 g (dry)", "Zucchini · 250 g", "Cottage cheese · 200 g", "Olive oil · 5 g"], protein: 50, fiber: 7, cal: 680 }
+      ],
+      snack: [
+        { name: "Date PB Bites", items: ["Dates · 5 (pitted, stuffed with PB)", "Peanut butter · 15 g", "0% Greek yogurt · 200 g"], protein: 26, fiber: 8, cal: 465 },
+        { name: "Dark Choc Skyr Cup", items: ["Skyr / 0% Greek yogurt · 400 g", "Dark chocolate 85% · 20 g", "Banana · 1"], protein: 47, fiber: 5, cal: 450 },
+        { name: "Baked Cinnamon Apples", items: ["Apples · 2 (baked or raw)", "Cottage cheese · 300 g", "Honey · 10 g", "Cinnamon"], protein: 35, fiber: 8, cal: 430 }
+      ],
+      dinner: [
+        { name: "Chicken Pasta Bake", items: ["Chicken breast · 130 g", "Pasta · 70 g (dry)", "Zucchini · 200 g", "Tomatoes · 200 g", "Olive oil · 5 g"], protein: 52, fiber: 7, cal: 598 },
+        { name: "Fish Mushroom Potato", items: ["White fish · 180 g", "Potatoes · 250 g", "Mushrooms · 200 g", "Spinach · 150 g", "Olive oil · 5 g"], protein: 45, fiber: 8, cal: 514 },
+        { name: "Chicken Zucchini Skillet", items: ["Chicken breast · 130 g", "Zucchini · 300 g", "Mushrooms · 200 g", "Potatoes · 150 g", "Olive oil · 5 g"], protein: 47, fiber: 7, cal: 472 },
+        { name: "Tuna Pasta & Spinach", items: ["Canned tuna · 1 can (120 g)", "Pasta · 70 g (dry)", "Spinach · 200 g", "Zucchini · 150 g"], protein: 41, fiber: 7, cal: 445, tuna: true }
+      ]
     },
-    {
-      name: "Skyr Power Bowl",
-      items: ["Skyr / 0% Greek yogurt · 400 g", "Oats · 60 g", "Frozen berries · 150 g", "Banana · 1"],
-      protein: 53, fiber: 15, cal: 634
-    },
-    {
-      name: "Yogurt & Egg Boost",
-      items: ["0% Greek yogurt · 300 g", "Eggs · 3 (boiled)", "High-fiber crackers · 40 g", "Pear · 1"],
-      protein: 53, fiber: 11, cal: 622
-    }
-  ],
-  lunch: [
-    {
-      name: "Chicken Rice & Kidney Beans",
-      items: ["Chicken breast · 150 g", "Rice · 200 g (cooked)", "Mixed veg · 250 g", "Kidney beans · 100 g"],
-      protein: 67, fiber: 16, cal: 710
-    },
-    {
-      name: "Tuna Potato Bowl",
-      items: ["Canned tuna · 240 g (2 cans)", "Potatoes · 200 g", "Green beans · 200 g", "Chickpeas · 60 g"],
-      protein: 75, fiber: 15, cal: 618,
-      tuna: true
-    },
-    {
-      name: "Chicken Potato & Chickpeas",
-      items: ["Chicken breast · 150 g", "Potatoes · 200 g", "Broccoli · 250 g", "Chickpeas · 100 g"],
-      protein: 66, fiber: 18, cal: 677
-    },
-    {
-      name: "Chicken Spinach Rice",
-      items: ["Chicken breast · 150 g", "Rice · 150 g (cooked)", "Spinach · 200 g", "Bell pepper · 150 g", "Kidney beans · 80 g"],
-      protein: 65, fiber: 14, cal: 638
-    },
-    {
-      name: "Egg & Chicken Combo",
-      items: ["Eggs · 2", "Chicken breast · 120 g", "Rice · 130 g (cooked)", "Mixed veg · 200 g", "Chickpeas · 60 g"],
-      protein: 63, fiber: 11, cal: 665
-    },
-    {
-      name: "Chicken Carrot & Beans",
-      items: ["Chicken breast · 150 g", "Potatoes · 200 g", "Carrots · 200 g", "Kidney beans · 100 g"],
-      protein: 61, fiber: 17, cal: 637
-    }
-  ],
-  snack: [
-    {
-      name: "Cottage Cheese & Fruit",
-      items: ["Cottage cheese · 300 g", "Apple · 1", "High-fiber crackers · 15 g"],
-      protein: 35, fiber: 5, cal: 384
-    },
-    {
-      name: "Yogurt & Crunch",
-      items: ["0% Greek yogurt · 300 g", "High-fiber crackers · 20 g", "Banana · 1"],
-      protein: 33, fiber: 6, cal: 333
-    },
-    {
-      name: "Curd & Berries",
-      items: ["Cottage cheese · 250 g", "Frozen berries · 100 g", "High-fiber crackers · 20 g"],
-      protein: 31, fiber: 8, cal: 316
-    },
-    {
-      name: "Egg & Yogurt Snack",
-      items: ["Eggs · 2 (hard boiled)", "0% Greek yogurt · 200 g", "Apple · 1", "High-fiber crackers · 15 g"],
-      protein: 34, fiber: 5, cal: 402
-    },
-    {
-      name: "Cottage Cheese & Crunch",
-      items: ["Cottage cheese · 250 g", "High-fiber crackers · 40 g", "Banana · 1"],
-      protein: 33, fiber: 10, cal: 422
-    }
-  ],
-  dinner: [
-    {
-      name: "Fish & Roasted Potatoes",
-      items: ["White fish · 150 g", "Potatoes · 250 g", "Broccoli · 250 g", "Olive oil · drizzle (5 g)"],
-      protein: 39, fiber: 12, cal: 477
-    },
-    {
-      name: "Chicken & Potato Bake",
-      items: ["Chicken breast · 120 g", "Potatoes · 200 g", "Mixed veg · 250 g", "Olive oil · drizzle (5 g)"],
-      protein: 47, fiber: 12, cal: 497
-    },
-    {
-      name: "Fish Rice Bowl",
-      items: ["White fish · 150 g", "Rice · 130 g (cooked)", "Spinach · 200 g", "Carrots · 100 g"],
-      protein: 37, fiber: 8, cal: 379
-    },
-    {
-      name: "Chicken Bell Pepper Stir",
-      items: ["Chicken breast · 120 g", "Rice · 130 g (cooked)", "Bell peppers · 200 g", "Broccoli · 200 g"],
-      protein: 48, fiber: 10, cal: 497
-    },
-    {
-      name: "Tuna & Green Beans",
-      items: ["Canned tuna · 1 can (~120 g)", "Potatoes · 250 g", "Green beans · 250 g"],
-      protein: 41, fiber: 14, cal: 442,
-      tuna: true
-    },
-    {
-      name: "Fish & Veg Tray",
-      items: ["White fish · 150 g", "Potatoes · 200 g", "Bell peppers · 150 g", "Green beans · 200 g", "Olive oil · drizzle (5 g)"],
-      protein: 36, fiber: 14, cal: 456
-    }
-  ]
-};
+    shopping: [
+      { category: "Protein", items: [
+        { key: "sp1", name: "Chicken breast", qty: "2 kg" },
+        { key: "sp2", name: "White fish (frozen)", qty: "700 g" },
+        { key: "sp3", name: "Canned tuna (light)", qty: "4 cans", note: "Max 3–4 meals/week" },
+        { key: "sp4", name: "Eggs", qty: "18" },
+        { key: "sp5", name: "Skyr / 0% Greek yogurt", qty: "2 kg" },
+        { key: "sp6", name: "Cottage cheese (low-fat)", qty: "2 kg" }
+      ]},
+      { category: "Carbs", items: [
+        { key: "sc1", name: "Pasta (penne or fusilli)", qty: "500 g" },
+        { key: "sc2", name: "Potatoes", qty: "2 kg" },
+        { key: "sc3", name: "Oats", qty: "400 g" },
+        { key: "sc4", name: "High-fiber crackers", qty: "300 g" }
+      ]},
+      { category: "Vegetables", items: [
+        { key: "sv1", name: "Zucchini", qty: "1.5 kg" },
+        { key: "sv2", name: "Mushrooms", qty: "1 kg" },
+        { key: "sv3", name: "Spinach", qty: "500 g" },
+        { key: "sv4", name: "Tomatoes", qty: "800 g" },
+        { key: "sv5", name: "Cucumber", qty: "×2" }
+      ]},
+      { category: "Fruit & Sweet", items: [
+        { key: "sft1", name: "Apples", qty: "×7" },
+        { key: "sft2", name: "Bananas", qty: "×5" },
+        { key: "sft3", name: "Dates (pitted)", qty: "200 g" },
+        { key: "sft4", name: "Dark chocolate 85%+", qty: "100 g" },
+        { key: "sft5", name: "Honey", qty: "1 jar" }
+      ]},
+      { category: "Fats", items: [
+        { key: "sg1", name: "Peanut butter", qty: "1 jar" },
+        { key: "sg2", name: "Olive oil", qty: "1 bottle" }
+      ]}
+    ]
+  }
+];
 
 // ─── Workout data ─────────────────────────────────────────────
 const WORKOUTS = {
@@ -811,6 +904,9 @@ function dayOfPlan() {
 function weekNumber() {
   return Math.min(Math.max(Math.floor(dayOfPlan() / 7) + 1, 1), 8);
 }
+function currentPlan() {
+  return WEEKLY_PLANS[(weekNumber() - 1) % 4];
+}
 
 // ─── Shopping list ────────────────────────────────────────────
 function toggleShop() {
@@ -830,13 +926,29 @@ function resetShop(e) {
   });
   updateShopProgress();
 }
-function bindShopList() {
+function renderShoppingList() {
+  const plan  = currentPlan();
   const state = getShopState();
+  let html = '';
+  plan.shopping.forEach(cat => {
+    html += `<div class="shop-category"><div class="shop-category-title">${cat.category}</div><ul class="shop-list">`;
+    cat.items.forEach(item => {
+      const checked = !!state[item.key];
+      html += `<li data-skey="${item.key}"${checked ? ' class="got"' : ''}>`;
+      html += `<input type="checkbox"${checked ? ' checked' : ''}>`;
+      html += `<span class="shop-item-name">${item.name}</span>`;
+      html += `<span class="shop-item-qty">${item.qty}</span>`;
+      html += `</li>`;
+      if (item.note) html += `<div class="shop-note" style="padding-left:28px">${item.note}</div>`;
+    });
+    html += `</ul></div>`;
+  });
+  document.getElementById('shop-categories').innerHTML = html;
+}
+function bindShopList() {
+  renderShoppingList();
   document.querySelectorAll('#shop-body .shop-list li').forEach(li => {
     const key = li.dataset.skey;
-    const cb  = li.querySelector('input[type=checkbox]');
-    cb.checked = !!state[key];
-    if (cb.checked) li.classList.add('got');
     li.addEventListener('click', (e) => {
       toggleShopItem(li, key, e.target.type === 'checkbox' ? e.target.checked : undefined);
     });
@@ -867,11 +979,12 @@ function updateShopProgress() {
 // ─── Meal selection ───────────────────────────────────────────
 function defaultIndices() {
   const d = dayOfPlan();
+  const m = currentPlan().meals;
   return {
-    breakfast: d % MEALS.breakfast.length,
-    lunch:     (d + 1) % MEALS.lunch.length,
-    snack:     (d + 2) % MEALS.snack.length,
-    dinner:    (d + 3) % MEALS.dinner.length
+    breakfast: d % m.breakfast.length,
+    lunch:     (d + 1) % m.lunch.length,
+    snack:     (d + 2) % m.snack.length,
+    dinner:    (d + 3) % m.dinner.length
   };
 }
 function getMealSelection() {
@@ -885,40 +998,42 @@ function saveMealSelection(sel) {
   const state = getState(); state.meals = sel; setState(state);
 }
 function shuffleAll() {
-  const lunchIdx  = Math.floor(Math.random() * MEALS.lunch.length);
-  const lunchTuna = MEALS.lunch[lunchIdx].tuna;
-  let dinnerIdx   = Math.floor(Math.random() * MEALS.dinner.length);
-  if (lunchTuna && MEALS.dinner[dinnerIdx].tuna) {
-    const safe = MEALS.dinner.map((_,i)=>i).filter(i => !MEALS.dinner[i].tuna);
+  const m = currentPlan().meals;
+  const lunchIdx  = Math.floor(Math.random() * m.lunch.length);
+  const lunchTuna = m.lunch[lunchIdx].tuna;
+  let dinnerIdx   = Math.floor(Math.random() * m.dinner.length);
+  if (lunchTuna && m.dinner[dinnerIdx].tuna) {
+    const safe = m.dinner.map((_,i)=>i).filter(i => !m.dinner[i].tuna);
     if (safe.length) dinnerIdx = safe[Math.floor(Math.random()*safe.length)];
   }
   const sel = {
-    breakfast: Math.floor(Math.random() * MEALS.breakfast.length),
-    lunch: lunchIdx, snack: Math.floor(Math.random() * MEALS.snack.length), dinner: dinnerIdx
+    breakfast: Math.floor(Math.random() * m.breakfast.length),
+    lunch: lunchIdx, snack: Math.floor(Math.random() * m.snack.length), dinner: dinnerIdx
   };
   saveMealSelection(sel);
   renderAllMeals(sel);
 }
 function reshuffleSingle(slot) {
-  const sel       = getMealSelection();
-  const lunchTuna = MEALS.lunch[sel.lunch]?.tuna;
-  const dinnerTuna= MEALS.dinner[sel.dinner]?.tuna;
+  const m          = currentPlan().meals;
+  const sel        = getMealSelection();
+  const lunchTuna  = m.lunch[sel.lunch]?.tuna;
+  const dinnerTuna = m.dinner[sel.dinner]?.tuna;
   if (slot === 'lunch') {
-    let idx = Math.floor(Math.random() * MEALS.lunch.length);
-    if (dinnerTuna && MEALS.lunch[idx].tuna) {
-      const safe = MEALS.lunch.map((_,i)=>i).filter(i => !MEALS.lunch[i].tuna);
+    let idx = Math.floor(Math.random() * m.lunch.length);
+    if (dinnerTuna && m.lunch[idx].tuna) {
+      const safe = m.lunch.map((_,i)=>i).filter(i => !m.lunch[i].tuna);
       if (safe.length) idx = safe[Math.floor(Math.random()*safe.length)];
     }
     sel.lunch = idx;
   } else if (slot === 'dinner') {
-    let idx = Math.floor(Math.random() * MEALS.dinner.length);
-    if (lunchTuna && MEALS.dinner[idx].tuna) {
-      const safe = MEALS.dinner.map((_,i)=>i).filter(i => !MEALS.dinner[i].tuna);
+    let idx = Math.floor(Math.random() * m.dinner.length);
+    if (lunchTuna && m.dinner[idx].tuna) {
+      const safe = m.dinner.map((_,i)=>i).filter(i => !m.dinner[i].tuna);
       if (safe.length) idx = safe[Math.floor(Math.random()*safe.length)];
     }
     sel.dinner = idx;
   } else {
-    sel[slot] = Math.floor(Math.random() * MEALS[slot].length);
+    sel[slot] = Math.floor(Math.random() * m[slot].length);
   }
   saveMealSelection(sel);
   renderAllMeals(sel);
@@ -938,7 +1053,8 @@ function renderMeal(slot, meal) {
   el.innerHTML = html;
 }
 function renderAllMeals(sel) {
-  ['breakfast','lunch','snack','dinner'].forEach(slot => renderMeal(slot, MEALS[slot][sel[slot]]));
+  const m = currentPlan().meals;
+  ['breakfast','lunch','snack','dinner'].forEach(slot => renderMeal(slot, m[slot][sel[slot]]));
   updateMacroSummary(sel);
 }
 
@@ -948,9 +1064,10 @@ function macroStatus(v, lo, hi) {
   return v < lo * 0.93 ? 'low' : 'warn';
 }
 function updateMacroSummary(sel) {
-  const totP   = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + MEALS[sl][sel[sl]].protein, 0);
-  const totF   = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + MEALS[sl][sel[sl]].fiber,   0);
-  const totCal = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + MEALS[sl][sel[sl]].cal,     0);
+  const m      = currentPlan().meals;
+  const totP   = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + m[sl][sel[sl]].protein, 0);
+  const totF   = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + m[sl][sel[sl]].fiber,   0);
+  const totCal = ['breakfast','lunch','snack','dinner'].reduce((s,sl) => s + m[sl][sel[sl]].cal,     0);
   const pSt = macroStatus(totP, 180, 200), fSt = macroStatus(totF, 40, 50), cSt = macroStatus(totCal, 2000, 2250);
   document.getElementById('bar-p').style.width   = Math.min(totP   / 200   * 100, 100) + '%';
   document.getElementById('bar-f').style.width   = Math.min(totF   / 50    * 100, 100) + '%';
@@ -1041,6 +1158,11 @@ async function init() {
   bindChecklist('nutrition-list');
   bindChecklist('activity-list');
   updateProgress();
+  const plan = currentPlan();
+  const wn   = weekNumber();
+  document.getElementById('theme-bar-name').textContent = plan.displayName;
+  document.getElementById('theme-bar-week').textContent = `Week ${wn} of 8`;
+  document.getElementById('theme-bar').style.setProperty('--theme-color', plan.color);
   const sel = getMealSelection();
   renderAllMeals(sel);
   bindShopList();
